@@ -10,7 +10,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-       pgstorage:/var/lib/postgresql/data
+      - pgstorage:/var/lib/postgresql/data
     networks:
       - heatmap_net
   grafana:
@@ -33,7 +33,7 @@ services:
     links:
       - postgres
     volumes:
-      - ./src:/src
+      - ../src:/src
     networks:
       - heatmap_net
 volumes:
