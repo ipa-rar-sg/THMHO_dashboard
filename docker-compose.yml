@@ -1,0 +1,48 @@
+version: "3.9"
+services:
+  postgres:
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=heatmap
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+       pgstorage:/var/lib/postgresql/data
+    networks:
+      - heatmap_net
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - grafstorage:/var/lib/grafana
+    links:
+      - postgres
+    networks:
+      - heatmap_net
+  app:
+    build: .
+    container_name: app
+    image: app
+    ports:
+      - 5000:5000
+    links:
+      - postgres
+    volumes:
+      - ./src:/src
+    networks:
+      - heatmap_net
+volumes:
+  pgstorage:
+    external: true
+  grafstorage:
+    external: true
+networks:
+  heatmap_net:
+    external: true
+    driver: bridge
+
