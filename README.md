@@ -8,15 +8,39 @@
   ```bash
   ./src/init.sh
   ```
+2. Inside the docker directory (Set the --build flag only for the first time, or if there are changes made to the flask app image)
+  ```bash
+  docker-compose up --build
+  ```
 
 ### Initial migration
 
+TODO
+- Create DB connection through script (For now, see image of how to do it manually)
+
+1. Go to configuration -> Data sources -> Add data source
+2. Select PostgreSQL
+3. Config the connection as shown in the picture below
+
+![Create connection grafana postgres manually](docs/img/ConfigDBGraf.png)
+
+4. Save & test
+
 ### Functionality
+
+- Grafana: http://localhost:3000
+- API: http://localhost:5000
+- Postgres: localhost:5432
+
+To create the factory database:
+- http://localhost:5000/create
+
+To insert the test message into the facory db:
+- http://localhost:5000/insert
 
 ### TODO
 - [] Modularity through env variables (Maybe file)
 - [] Functionality sh scripts
-  + [] Grafana + DB connection through script (not through UI)
   + [] Scripts for API interaction
 - [] Actual python code for flask
 - [] Heatmap itself
