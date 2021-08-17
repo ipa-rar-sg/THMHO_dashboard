@@ -1,6 +1,6 @@
 ## Heatmap Lidar
 
-Grafana + Postgres
+![General services architecture](docs/img/LidarHeatmapArch.png)
 
 ### Initial Setup
 
