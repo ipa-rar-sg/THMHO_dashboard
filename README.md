@@ -4,14 +4,9 @@ Grafana + Postgres
 
 ### Initial Setup
 
-1. Create the following docker volumes.
+1. Create the docker volumes and network by executing the init.sh script
   ```bash
-  docker volume create pgstorage
-  docker volume create grafstorage
-  ```
-2. Create the network.
-  ```bash
-  docker network create heatmap_net
+  ./src/init.sh
   ```
 
 ### Initial migration
