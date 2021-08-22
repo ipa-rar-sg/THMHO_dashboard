@@ -13,19 +13,6 @@
   docker-compose up --build
   ```
 
-### Initial migration
-
-TODO
-- Create DB connection through script (For now, see image of how to do it manually)
-
-1. Go to configuration -> Data sources -> Add data source
-2. Select PostgreSQL
-3. Config the connection as shown in the picture below
-
-![Create connection grafana postgres manually](docs/img/ConfigDBGraf.png)
-
-4. Save & test
-
 ### Functionality
 
 - Grafana: http://localhost:3000

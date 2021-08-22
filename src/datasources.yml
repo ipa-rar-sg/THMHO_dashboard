@@ -1,0 +1,21 @@
+apiVersion: 1
+
+deleteDatasources:
+
+datasources:
+- name: PostgreSQL
+  type: postgres
+  access: proxy
+  url: postgres:5432
+  user: postgres
+  secureJsonData:
+    password: "admin"
+  jsonData:
+    sslmode: "disable"
+    postgresVersion: 1300
+  database: heatmap
+  basicAuth: false
+  isDefault: true
+  version: 1
+  editable: true
+
