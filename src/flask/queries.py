@@ -1,4 +1,4 @@
-def create_table(table_name, msg):
+def create_table(table_name, body):
     '''
     Returns the query that creates the table <table_name> with dimensions
     (columns) based on the provided message <msg>.
@@ -7,8 +7,8 @@ def create_table(table_name, msg):
     '''
     query = f'CREATE TABLE IF NOT EXISTS {table_name} (id serial PRIMARY KEY, date TIMESTAMP NOT NULL, '
 
-    for i in range(msg.width):
-        for j in range(msg.height):
+    for i in range(body['width']):
+        for j in range(body['height']):
             query += f'"({i},{j})" INT NOT NULL,'
 
     query = query[:-1] + ');'
@@ -22,19 +22,19 @@ def delete_table(table_name):
     query = f'DROP TABLE IF EXISTS {table_name};'
     return query
 
-def insert_into_table(table_name, msg):
+def insert_into_table(table_name, body):
     '''
     Returns the query that inserts a new entry with the information stored
     on <msg> into the table <table_name>
     @param table_name: String of the name of the table
-    @param msg: Instance of class utils.MSG which holds the info to insert
+    @param msg: JSON format of the /heatmap message
     '''
     query = f'INSERT INTO {table_name} VALUES (DEFAULT, %s, '
-    query += '%s, ' * (msg.width*msg.height)
+    query += '%s, ' * (body['width']*body['height'])
     query = query[:-2] + ');'
     return query
 
-def select_from_table(table_name, limit=0):
+def select_from_table(table_name, limit):
     '''
     Returns the query that selects all fields from the table <table_name>, if
     <limit> not specified, then the query is for selecting all entries present

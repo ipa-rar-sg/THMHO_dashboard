@@ -13,42 +13,47 @@ services:
       - pgstorage:/var/lib/postgresql/data
     networks:
       - heatmap_net
-  grafana:
-    container_name: grafana
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile-flask
+    container_name: flask
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=heatmap
-    image: grafana/grafana
-    ports:
-      - 3000:3000
-    volumes:
-      - grafstorage:/var/lib/grafana
-      - ../src/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-    links:
-      - postgres
-    networks:
-      - heatmap_net
-  app:
-    build: .
-    container_name: app
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=heatmap
-    image: app
+      - POSTGRES_TABLE=factory
+    image: flask
     ports:
       - 5000:5000
     links:
       - postgres
     volumes:
-      - ../src/app:/src
+      - ../src/flask:/src
+    networks:
+      - heatmap_net
+  dash:
+    build:
+      context: .
+      dockerfile: Dockerfile-dash
+    container_name: dash
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=heatmap
+      - POSTGRES_TABLE=factory
+    image: dash
+    ports:
+      - 8050:8050
+    links:
+      - postgres
+      - flask
+    volumes:
+      - ../src/dash:/src
     networks:
       - heatmap_net
 volumes:
   pgstorage:
-    external: true
-  grafstorage:
     external: true
 networks:
   heatmap_net:
