@@ -8,26 +8,29 @@
   ```bash
   ./src/init.sh
   ```
-2. Inside the docker directory (Set the --build flag only for the first time, or if there are changes made to the flask app image)
+
+2. Inside the docker directory (Set the --build flag only for the first time, or if there are changes made to the flask or dash app images)
   ```bash
   docker-compose up --build
   ```
 
 ### Functionality
 
-- Grafana: http://localhost:3000
-- API: http://localhost:5000
+- Dash: http://localhost:8050
+- Flask API: http://localhost:5000
 - Postgres: localhost:5432
 
-To create the factory database:
-- http://localhost:5000/create
+To create the factory table in the database, execute the command passing width and height as arguments, e.g.
+- ./create_table.sh \<width\> \<height\>
+- ./create_table.sh 10 20
 
-To insert the test message into the facory db:
+To insert a registry into the factory table, send a post request to the following endpoint:
+
 - http://localhost:5000/insert
 
-### TODO
-- [] Modularity through env variables (Maybe file)
-- [] Functionality sh scripts
-  + [] Scripts for API interaction
-- [] Actual python code for flask
-- [] Heatmap itself
+With a json body, with the following fields and values:
+- width: (int)
+- height: (int)
+- date: (string of timestamp)
+- data: (list of ints, size width * height)
+
