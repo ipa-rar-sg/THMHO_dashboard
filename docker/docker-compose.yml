@@ -22,11 +22,13 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=heatmap
-      - POSTGRES_TABLE=factory
+      - POSTGRES_TABLE=$POSTGRES_TABLE
+      - HEATMAP_WIDTH=$HEATMAP_WIDTH
+      - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: flask
     ports:
       - 5000:5000
-    links:
+    depends_on:
       - postgres
     volumes:
       - ../src/flask:/src
@@ -41,12 +43,13 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=heatmap
-      - POSTGRES_TABLE=factory
+      - POSTGRES_TABLE=$POSTGRES_TABLE
+      - HEATMAP_WIDTH=$HEATMAP_WIDTH
+      - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: dash
     ports:
       - 8050:8050
-    links:
-      - postgres
+    depends_on:
       - flask
     volumes:
       - ../src/dash:/src
