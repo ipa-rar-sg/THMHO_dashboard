@@ -55,9 +55,9 @@ class PSQL:
             with psycopg2.connect(**self.config) as conn:
                 with conn.cursor() as curs:
                     curs.execute(query, args)
-            return 'Query executed successfully'
+            return 'Query executed successfully\n'
         except Exception as e:
-            return f'Execution failed, due to following error: {e}'
+            return f'Execution failed, due to following error: {e}\n'
 
 psql = PSQL(_config)
 
