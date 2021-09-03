@@ -37,8 +37,7 @@ data = df.iloc[-1]
 last_time = data.name
 data = data.to_numpy()[1:].reshape((config['width'], config['height']))
 
-# df = pd.read_sql("SELECT * FROM factory WHERE date < '2021-08-16 13:56:43.028817';", conn, index_col='date')
-
+# df2 = pd.read_sql(f"SELECT * FROM factory WHERE date > '{last_time}';", conn, index_col='date')
 
 fig = go.Figure(data = go.Heatmap(
     z = data,
@@ -67,7 +66,7 @@ app.layout = html.Div([
     # )
 ])
 
-# @app.callback(Output('heatmap', 'children'), Input('interval', 'n_intervals'))
+# @app.callback(Output('heatmap', 'figure'), Input('interval', 'n_intervals'))
 # def last_heatmap
 
 if __name__ == '__main__':
