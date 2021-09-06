@@ -6,7 +6,7 @@ echo "----------------------------------------"
 docker volume create pgstorage
 docker network create heatmap_net
 echo "----------------------------------------"
-echo "FINISHED, IGNORE MISTAKES ABOVE (IF ANY)"
+echo "FINISHED, IGNORE ERRORS ABOVE (IF ANY)"
 echo "----------------------------------------"
 echo "INPUT TABLE NAME TO CREATE:"
 read TABLE_NAME
