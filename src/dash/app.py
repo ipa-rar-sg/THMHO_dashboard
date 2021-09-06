@@ -17,10 +17,13 @@ fig = go.Figure(data = go.Heatmap(
     # [[0, 'rgb(63,0,145)'], [0.5, 'rgb(219,107,2)'], [1, 'rgb(255,229,143)']],
 ))
 
+resolution = (1920, 1080)
+cell_max_size = resolution[1] // data.config['width']
+
 fig.update_layout(
     autosize = False,
-    width = 800,
-    height = 800,
+    width = cell_max_size * data.config['height'],
+    height = cell_max_size * data.config['width'],
 )
 
 app = dash.Dash(__name__)
