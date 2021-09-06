@@ -1,7 +1,8 @@
-from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
 import time
+import os
+from sqlalchemy import create_engine
 
 config = {
     'dbname': os.getenv('POSTGRES_DB'),
@@ -18,8 +19,6 @@ conn_url = f"postgresql+psycopg2://{config['user']}:{config['password']}@{config
 def get_date(date):
     return df.loc[date].to_numpy()[-1][1:].reshape((config['width'], config['height']))
 
-df = pd.read_sql(config['table'], conn, index_col='date')
-
 class DataHolder:
     def __init__(self):
         self.config = config
@@ -29,7 +28,6 @@ class DataHolder:
             time.sleep(3)
             self.df = pd.read_sql(self.config['table'], self.conn, index_col='date')
         self.last_time = self.df.iloc[-1].name
-
 
     def update(self):
         _tmp = pd.read_sql(f"SELECT * FROM {self.config['table']} WHERE date > '{self.last_time}';", self.conn, index_col='date')

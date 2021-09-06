@@ -10,7 +10,7 @@ from datetime import datetime
 data = utils.DataHolder()
 
 fig = go.Figure(data = go.Heatmap(
-    z = data.data,
+    z = data.get_last_data(),
     x = list(range(0, data.config['width'])),
     y = list(range(0, data.config['height'])),
     colorscale = 'thermal'
