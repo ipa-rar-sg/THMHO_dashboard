@@ -2,47 +2,17 @@ import dash
 import os
 import dash_core_components as dcc
 import dash_html_components as html
-import numpy as np
-import pandas as pd
-import time
+import utils
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
-from sqlalchemy import create_engine
 from datetime import datetime
 
-config = {
-    'dbname': os.getenv('POSTGRES_DB'),
-    'user': os.getenv('POSTGRES_USER'),
-    'password': os.getenv('POSTGRES_PASSWORD'),
-    'table': os.getenv('POSTGRES_TABLE'),
-    'width': int(os.getenv('HEATMAP_WIDTH')),
-    'height': int(os.getenv('HEATMAP_HEIGHT')),
-    'host': 'postgres'
-}
-
-conn_url = f"postgresql+psycopg2://{config['user']}:{config['password']}@{config['host']}:5432/{config['dbname']}"
-
-conn = create_engine(conn_url)
-
-def get_date(date):
-    return df.loc[date].to_numpy()[-1][1:].reshape((config['width'], config['height']))
-
-df = pd.read_sql(config['table'], conn, index_col='date')
-
-while df.empty:
-    time.sleep(5)
-    df = pd.read_sql(config['table'], conn, index_col='date')
-
-data = df.iloc[-1]
-last_time = data.name
-data = data.to_numpy()[1:].reshape((config['width'], config['height']))
-
-# df2 = pd.read_sql(f"SELECT * FROM factory WHERE date > '{last_time}';", conn, index_col='date')
+data = utils.DataHolder()
 
 fig = go.Figure(data = go.Heatmap(
-    z = data,
-    x = list(range(0, config['width'])),
-    y = list(range(0, config['height'])),
+    z = data.data,
+    x = list(range(0, data.config['width'])),
+    y = list(range(0, data.config['height'])),
     colorscale = 'thermal'
     # [[0, 'rgb(63,0,145)'], [0.5, 'rgb(219,107,2)'], [1, 'rgb(255,229,143)']],
 ))
@@ -67,7 +37,8 @@ app.layout = html.Div([
 ])
 
 # @app.callback(Output('heatmap', 'figure'), Input('interval', 'n_intervals'))
-# def last_heatmap
+# def last_heatmap():
+#     data.update()
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0')
