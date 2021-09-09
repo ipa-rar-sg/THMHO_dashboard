@@ -39,6 +39,8 @@ def update_last_heatmap(n):
         autosize = False,
         width = cell_max_size * data.config['width'],
         height = cell_max_size * data.config['height'],
+        title = f'<b>Showing heatmap: {data.last_time}</b>',
+        title_x = 0.5,
     )
     return fig
 
