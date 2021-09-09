@@ -23,7 +23,13 @@ class DataHolder:
     def __init__(self):
         self.config = config
         self.conn = create_engine(conn_url)
-        self.df = pd.read_sql(self.config['table'], self.conn, index_col='date')
+        _init = False
+        while not _init:
+            try:
+                self.df = pd.read_sql(self.config['table'], self.conn, index_col='date')
+                _init = True
+            except:
+                time.sleep(2)
         while self.df.empty:
             time.sleep(3)
             self.df = pd.read_sql(self.config['table'], self.conn, index_col='date')
@@ -38,4 +44,4 @@ class DataHolder:
         return self.df.loc[date].to_numpy()[-1][1:].reshape((self.config['width'], self.config['height']))
 
     def get_last_data(self):
-        return self.df.iloc[-1].to_numpy()[1:].reshape((self.config['width'], self.config['height']))
+        return self.df.iloc[-1].to_numpy()[1:].reshape((self.config['height'], self.config['width']))
