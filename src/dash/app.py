@@ -20,7 +20,7 @@ app.layout = html.Div([
     #               options=[{'label': 'Live Update', 'value' : 'live'}])
     dcc.Interval(
         id = 'interval',
-        interval = 30 * 1000, # Milliseconds
+        interval = 3 * 1000, # Milliseconds
         n_intervals = 0
     )
 ])
@@ -37,8 +37,8 @@ def update_last_heatmap(n):
     ))
     fig.update_layout(
         autosize = False,
-        width = cell_max_size * data.config['height'],
-        height = cell_max_size * data.config['width'],
+        width = cell_max_size * data.config['width'],
+        height = cell_max_size * data.config['height'],
     )
     return fig
 
