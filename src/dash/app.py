@@ -15,13 +15,43 @@ cell_max_size = resolution[1] // data.config['width']
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
+    html.H1('THMHO'),
     dcc.Graph(id='heatmap'),
-    # dcc.Checklist(id='check_live',
-    #               options=[{'label': 'Live Update', 'value' : 'live'}])
     dcc.Interval(
         id = 'interval',
         interval = 3 * 1000, # Milliseconds
         n_intervals = 0
+    ),
+    html.Div([
+        html.H3('Running mode'),
+        dcc.RadioItems(
+            options = [
+                {'label': 'Auto-update', 'value': 'auto'},
+                {'label': 'Date', 'value': 'date'}
+            ],
+            value = 'auto',
+            labelStyle={'display': 'block'}
+        ),
+        html.H3('Date Picker '),
+        dcc.DatePickerSingle(id='date_picker'),
+        html.H3('Time'),
+        html.H4('Hour'),
+        dcc.Dropdown(
+            id = 'hour',
+            options = [{'label': str(i), 'value': i} for i in range(24)]
+        ),
+        html.H4('Minute'),
+        dcc.Dropdown(
+            id = 'minute',
+            options = [{'label': str(i), 'value': i} for i in range(60)]
+        ),
+        html.H4('Second'),
+        dcc.Dropdown(
+            id = 'second',
+            options = [{'label': str(i), 'value': i} for i in range(60)]
+        ),
+    ],
+    style={'columnCount': 2}
     )
 ])
 
