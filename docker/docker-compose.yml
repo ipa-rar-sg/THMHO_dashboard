@@ -1,16 +1,16 @@
 version: "3.9"
 services:
-  postgres:
-    container_name: postgres
+  mongo:
+    container_name: mongo
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=heatmap
-    image: postgres
+      - MONGO_INITDB_DATABASE=heatmap
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    image: mongo
     ports:
-      - 5432:5432
+      - 27017:27017
     volumes:
-      - pgstorage:/var/lib/postgresql/data
+      - mgstorage:/data/db
     networks:
       - heatmap_net
   flask:
@@ -19,17 +19,17 @@ services:
       dockerfile: Dockerfile-flask
     container_name: flask
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=heatmap
-      - POSTGRES_TABLE=$POSTGRES_TABLE
+      - MONGO_INITDB_DATABASE=heatmap
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_COLLECTION=$MONGO_COLLECTION
       - HEATMAP_WIDTH=$HEATMAP_WIDTH
       - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: flask
     ports:
       - 5000:5000
     depends_on:
-      - postgres
+      - mongo
     volumes:
       - ../src/flask:/src
     networks:
@@ -40,10 +40,10 @@ services:
       dockerfile: Dockerfile-dash
     container_name: dash
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=heatmap
-      - POSTGRES_TABLE=$POSTGRES_TABLE
+      - MONGO_INITDB_DATABASE=heatmap
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_COLLECTION=$MONGO_COLLECTION
       - HEATMAP_WIDTH=$HEATMAP_WIDTH
       - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: dash
@@ -56,7 +56,7 @@ services:
     networks:
       - heatmap_net
 volumes:
-  pgstorage:
+  mgstorage:
     external: true
 networks:
   heatmap_net:
