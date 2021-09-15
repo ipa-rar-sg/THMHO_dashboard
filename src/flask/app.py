@@ -15,6 +15,10 @@ config = {
 
 conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27017/{config['dbname']}"
 
+conn = pymongo.MongoClient(conn_str, connect=False)
+conn_db = conn[config['dbname']]
+conn_col = conn_db[config['collection']]
+
 @app.route('/')
 def home():
     return "API for Managing the Database"
@@ -29,9 +33,6 @@ def insert():
     - date: string containing valid timestamp
     - data: list of int containing the heatmap data
     '''
-    conn = pymongo.MongoClient(conn_str, connect=False)
-    conn_db = conn[config['dbname']]
-    conn_col = conn_db[config['collection']]
     body = request.json
     reg_id = conn_col.insert_one(body).inserted_id
     return f'Inserted successfully registry with new id: {reg_id}'
@@ -39,10 +40,7 @@ def insert():
 @app.route('/select', methods=['GET'])
 def select():
     '''
-    Selects registries from the database.
-    GET request with limit as query param.
-    Send limit as 0 to obtain all entries.
+    Still to implement
     '''
-    limit = int(request.args.get('limit'))
-    return 'Hola'
+    pass
 
