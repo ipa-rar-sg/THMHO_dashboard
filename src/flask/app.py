@@ -1,15 +1,23 @@
 from flask import Flask, request
-from utils import psql, MSG
-import queries
+import pymongo
 import os
+import time
 
 app = Flask(__name__)
 
-table = os.getenv('POSTGRES_TABLE')
+config = {
+    'collection' : os.getenv('MONGO_COLLECTION'),
+    'dbname' : os.getenv('MONGO_INITDB_DATABASE'),
+    'user' : os.getenv('MONGO_INITDB_ROOT_USERNAME'),
+    'pass' : os.getenv('MONGO_INITDB_ROOT_PASSWORD'),
+    'host' : '127.0.0.1'
+}
+
+conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27017/{config['dbname']}"
 
 @app.route('/')
 def home():
-    return "API for Managing the Postgres Database"
+    return "API for Managing the Database"
 
 @app.route('/insert', methods=['POST'])
 def insert():
@@ -21,9 +29,12 @@ def insert():
     - date: string containing valid timestamp
     - data: list of int containing the heatmap data
     '''
+    conn = pymongo.MongoClient(conn_str, connect=False)
+    conn_db = conn[config['dbname']]
+    conn_col = conn_db[config['collection']]
     body = request.json
-    query = queries.insert_into_table(table, body)
-    return psql.exec_query(query, body['date'], *body['data'])
+    reg_id = conn_col.insert_one(body).inserted_id
+    return f'Inserted successfully registry with new id: {reg_id}'
 
 @app.route('/select', methods=['GET'])
 def select():
@@ -33,17 +44,5 @@ def select():
     Send limit as 0 to obtain all entries.
     '''
     limit = int(request.args.get('limit'))
-    query = queries.select_from_table(table, limit)
-    return psql.exec_query(query)
-
-@app.route('/create_table', methods=['POST'])
-def create():
-    '''
-    Creates the table in the database.
-    POST request must have a json body with the following keys:
-    - width: int
-    - height: int
-    '''
-    query = queries.create_table(table, request.json)
-    return psql.exec_query(query)
+    return 'Hola'
 
