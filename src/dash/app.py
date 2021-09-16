@@ -40,6 +40,7 @@ controls = dbc.FormGroup(
         html.H5('Show'),
         html.P(),
         dcc.RadioItems(
+            id = 'mode',
             options = [
                 {'label': ' Last heatmap (Auto update)', 'value': 'auto'},
                 {'label': ' Heatmap by selected date', 'value': 'date'}
@@ -103,11 +104,28 @@ content = html.Div(
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div([sidebar, content])
 
-@app.callback(Output('heatmap', 'figure'), Input('interval', 'n_intervals'))
-def update_last_heatmap(n):
+@app.callback(Output('heatmap', 'figure'),
+              Input('interval', 'n_intervals'),
+              Input('mode', 'value'),
+              Input('date_picker', 'date'),
+              Input('hour', 'value'),
+              Input('minute', 'value'),
+              Input('second', 'value'),
+              )
+def update_last_heatmap(n, _mode, _date, _hour, _min, _sec):
     data.update()
+    _tmp_data = None
+    _tmp_title = None
+    if _mode == 'date' and _date and _hour and _min and _sec:
+        _y, _m, _d = map(int, _date.split('-'))
+        _tmp_date = datetime(_y, _m, _d, _hour, _min, _sec)
+        _tmp_data, _tmp_title = data.get_data_from_date(_tmp_date, 5)
+    else:
+        _tmp_data = data.get_last_data()
+        _tmp_title = data.last_time
+
     fig = go.Figure(data = go.Heatmap(
-        z = data.get_last_data(),
+        z = _tmp_data,
         x = list(range(0, data.config['width'])),
         y = list(range(0, data.config['height'])),
         colorscale = 'thermal'
@@ -117,7 +135,7 @@ def update_last_heatmap(n):
         autosize = False,
         width = cell_max_size * data.config['width'],
         height = cell_max_size * data.config['height'],
-        title = f'<b>Showing heatmap: {data.last_time}</b>',
+        title = f'<b>Showing heatmap: {_tmp_title}</b>',
         title_x = 0.5,
     )
     return fig
