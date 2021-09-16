@@ -56,11 +56,33 @@ services:
       - ../src/dash:/src
     networks:
       - heatmap_net
+
+  heatmap_generator:
+    build:
+      context: .
+      dockerfile: Dockerfile-heatmap-gen
+    container_name: heatmap_generator
+    #command: roslaunch thmho_firos_heatmap_bringup bringup.launch
+    environment:
+      - "ROS_MASTER_URI=http://192.168.1.235:11311"
+      - "ROS_IP=192.168.1.235"
+    ports:
+      - "11311:11311"
+    networks:
+      heatmap_net:
+          ipv4_address: 192.168.1.235
+
 volumes:
   mgstorage:
     external: true
+
+
 networks:
   heatmap_net:
     external: true
-    driver: bridge
-
+    # driver: bridge
+    # ipam:
+    #   driver: default
+    #   config:
+    #     - subnet: 192.168.1.234/24
+    #       gateway: 192.168.1.234
