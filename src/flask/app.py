@@ -7,9 +7,11 @@ app = Flask(__name__)
 
 table = os.getenv('POSTGRES_TABLE')
 
+
 @app.route('/')
 def home():
     return "API for Managing the Postgres Database"
+
 
 @app.route('/insert', methods=['POST'])
 def insert():
@@ -25,6 +27,7 @@ def insert():
     query = queries.insert_into_table(table, body)
     return psql.exec_query(query, body['date'], *body['data'])
 
+
 @app.route('/select', methods=['GET'])
 def select():
     '''
@@ -36,6 +39,7 @@ def select():
     query = queries.select_from_table(table, limit)
     return psql.exec_query(query)
 
+
 @app.route('/create_table', methods=['POST'])
 def create():
     '''
@@ -46,4 +50,3 @@ def create():
     '''
     query = queries.create_table(table, request.json)
     return psql.exec_query(query)
-

@@ -16,8 +16,10 @@ config = {
 
 conn_url = f"postgresql+psycopg2://{config['user']}:{config['password']}@{config['host']}:5432/{config['dbname']}"
 
+
 def get_date(date):
     return df.loc[date].to_numpy()[-1][1:].reshape((config['width'], config['height']))
+
 
 class DataHolder:
     def __init__(self):
@@ -26,17 +28,20 @@ class DataHolder:
         _init = False
         while not _init:
             try:
-                self.df = pd.read_sql(self.config['table'], self.conn, index_col='date')
+                self.df = pd.read_sql(
+                    self.config['table'], self.conn, index_col='date')
                 _init = True
             except:
                 time.sleep(2)
         while self.df.empty:
             time.sleep(3)
-            self.df = pd.read_sql(self.config['table'], self.conn, index_col='date')
+            self.df = pd.read_sql(
+                self.config['table'], self.conn, index_col='date')
         self.last_time = self.df.iloc[-1].name
 
     def update(self):
-        _tmp = pd.read_sql(f"SELECT * FROM {self.config['table']} WHERE date > '{self.last_time}';", self.conn, index_col='date')
+        _tmp = pd.read_sql(
+            f"SELECT * FROM {self.config['table']} WHERE date > '{self.last_time}';", self.conn, index_col='date')
         self.df = pd.concat([self.df, _tmp])
         self.last_time = self.df.iloc[-1].name
 

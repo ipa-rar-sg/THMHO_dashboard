@@ -14,6 +14,7 @@ def create_table(table_name, body):
     query = query[:-1] + ');'
     return query
 
+
 def delete_table(table_name):
     '''
     Returns the query that deletes the table <table_name>
@@ -21,6 +22,7 @@ def delete_table(table_name):
     '''
     query = f'DROP TABLE IF EXISTS {table_name};'
     return query
+
 
 def insert_into_table(table_name, body):
     '''
@@ -33,6 +35,7 @@ def insert_into_table(table_name, body):
     query += '%s, ' * (body['width']*body['height'])
     query = query[:-2] + ');'
     return query
+
 
 def select_from_table(table_name, limit):
     '''
@@ -47,4 +50,3 @@ def select_from_table(table_name, limit):
         query += f' LIMIT {limit}'
     query += ';'
     return query
-

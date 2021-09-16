@@ -10,11 +10,13 @@ _config = {
     'host': 'postgres'
 }
 
+
 class MSG:
     '''
     Class for parsing and storing message information from the ROS yaml
     formated messages.
     '''
+
     def __init__(self, msg):
         '''
         Parses the msg YAML file into a python class
@@ -28,11 +30,13 @@ class MSG:
         self.height = _msg['info']['height']
         self.data = _msg['data']
 
+
 class PSQL:
     '''
     Class for executing PSQL commands based on the arguments provided within
     the config dictionary to create the connection to the Postgres database.
     '''
+
     def __init__(self, config):
         '''
         @param config: Python dictionary with values necessary to connect
@@ -59,5 +63,5 @@ class PSQL:
         except Exception as e:
             return f'Execution failed, due to following error: {e}\n'
 
-psql = PSQL(_config)
 
+psql = PSQL(_config)
