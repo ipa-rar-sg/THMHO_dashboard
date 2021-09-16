@@ -20,7 +20,7 @@ the user for the following data:
 
 - Dashboard (dash): http://localhost:8050
 - Flask API: http://localhost:5000
-- Postgres DB: localhost:5432
+- MongoDB: localhost:27017
 
 To insert a registry into the factory table, send a post request to the following endpoint:
 

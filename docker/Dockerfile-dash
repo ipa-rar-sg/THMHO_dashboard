@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 WORKDIR /src
 RUN pip install wheel 
-RUN pip install SQLAlchemy psycopg2-binary dash numpy pandas
+RUN pip install pymongo dash numpy pandas dash-bootstrap-components
 CMD ["python3", "app.py"]
 
