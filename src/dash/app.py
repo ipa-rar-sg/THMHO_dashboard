@@ -1,5 +1,6 @@
 import dash
 import os
+import numpy as np
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
@@ -12,8 +13,9 @@ data = utils.DataHolder()
 
 resolution = (1920, 1080)
 cell_max_size = resolution[1] // data.config['width']
+default_marks = {i: {'label': f'{i}'} for i in range(1,1)}
 
-TOLERANCE = 5
+TOLERANCE = 20
 # the style arguments for the sidebar.
 SIDEBAR_STYLE = {
     'position': 'fixed',
@@ -74,10 +76,11 @@ controls = dbc.FormGroup(
         html.P(),
         dcc.Slider(
             id = 'slider',
-            marks = {i: f'{i}' for i in range(10)},
-            max = 9,
-            value = 9,
-            step = 1,
+            marks = default_marks,
+            min = 1,
+            max = 10,
+            value = 1,
+            step = None,
             updatemode = 'drag',
             included = False
         )
@@ -118,6 +121,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.layout = html.Div([sidebar, content])
 
 @app.callback(Output('heatmap', 'figure'),
+              Output('slider', 'marks'),
               Input('interval', 'n_intervals'),
               Input('mode', 'value'),
               Input('date_picker', 'date'),
@@ -130,10 +134,20 @@ def update_last_heatmap(n, _mode, _date, _hour, _min, _sec, _nheat):
     data.update()
     _tmp_data = None
     _tmp_title = None
+    marks = default_marks
     if _mode == 'date' and _date and _hour and _min and _sec:
         _y, _m, _d = map(int, _date.split('-'))
         _tmp_date = datetime(_y, _m, _d, _hour, _min, _sec)
-        _tmp_data, _tmp_title = data.get_data_from_date(_tmp_date, TOLERANCE)
+        # _tmp_data, _tmp_title = data.get_data_from_date(_tmp_date, TOLERANCE)
+        data.get_data_from_date_bunch(_tmp_date, TOLERANCE)
+        if not data.timed_data.empty:
+            _tmp_len = len(data.timed_data)
+            marks = {i: {'label': f'{i}'} for i in range(1, _tmp_len + 1)}
+            _tmp_data = np.array(data.timed_data.iloc[_tmp_len // 2]['data']).reshape(data.shape)
+            _tmp_title = data.timed_data.iloc[_tmp_len // 2].name
+        else:
+            _tmp_data = np.zeros(data.shape)
+            _tmp_title = f'{_tmp_date.isoformat()} NOT FOUND'
     else:
         _tmp_data = data.get_last_data()
         _tmp_title = data.last_time
@@ -181,7 +195,7 @@ def update_last_heatmap(n, _mode, _date, _hour, _min, _sec, _nheat):
         title = f'<b>Showing heatmap: {_tmp_title}</b>',
         title_x = 0.5,
     )
-    return fig
+    return fig, marks
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0')

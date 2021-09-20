@@ -27,6 +27,7 @@ class DataHolder:
             self.df = self.read_df_from_query()
         self.df = self.df.set_index('date').iloc[-10:]
         self.last_time = self.df.iloc[-1].name
+        self.timed_data = None
 
     def set_connection(self):
         self.conn = pymongo.MongoClient(conn_str)
@@ -50,6 +51,15 @@ class DataHolder:
             return np.zeros(self.shape), f'{date.isoformat()} NOT FOUND'
         _tmp = _tmp.set_index('date')
         return np.array(_tmp.iloc[-1]['data']).reshape(self.shape), date.isoformat()
+
+    def get_data_from_date_bunch(self, date, delta=60):
+        low = (date - timedelta(0, delta)).isoformat()
+        high = (date + timedelta(0, delta)).isoformat()
+        _tmp = self.read_df_from_query({"date": {"$gte": low, "$lte": high}})
+        if not _tmp.empty:
+            _tmp = _tmp.set_index('date')
+        self.timed_data = _tmp.iloc[-10:]
+
 
     def get_last_data(self):
         return np.array(self.df.iloc[-1]['data']).reshape(self.shape)
