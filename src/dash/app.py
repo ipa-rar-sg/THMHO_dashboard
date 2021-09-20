@@ -1,7 +1,7 @@
 import dash
 import os
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import dash_bootstrap_components as dbc
 import utils
 import plotly.graph_objects as go
@@ -69,6 +69,18 @@ controls = dbc.FormGroup(
             id = 'second',
             options = [{'label': str(i), 'value': i} for i in range(60)]
         ),
+        html.P(),
+        html.H5('Last heatmaps'),
+        html.P(),
+        dcc.Slider(
+            id = 'slider',
+            marks = {i: f'{i}' for i in range(10)},
+            max = 9,
+            value = 9,
+            step = 1,
+            updatemode = 'drag',
+            included = False
+        )
     ]   )
     ]
 )
@@ -112,8 +124,9 @@ app.layout = html.Div([sidebar, content])
               Input('hour', 'value'),
               Input('minute', 'value'),
               Input('second', 'value'),
+              Input('slider', 'value'),
               )
-def update_last_heatmap(n, _mode, _date, _hour, _min, _sec):
+def update_last_heatmap(n, _mode, _date, _hour, _min, _sec, _nheat):
     data.update()
     _tmp_data = None
     _tmp_title = None
