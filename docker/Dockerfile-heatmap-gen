@@ -13,8 +13,10 @@ ENV CATKIN_WS=/root/catkin_ws
 RUN mkdir -p $CATKIN_WS/src
 WORKDIR $CATKIN_WS/src
 
-RUN git clone https://github.com/ipa-rar/THMHO_heatmap_launcher.git
-RUN git clone -b intel_nuc https://github.com/ipa-rar/THMHO_heatmap_generator.git
+RUN echo "Pulling THMHO THMHO_heatmap_launcher" \
+	&& git clone https://github.com/ipa-rar/THMHO_heatmap_launcher.git
+RUN echo "Pulling THMHO_heatmap_generator" \
+	&& git clone https://github.com/ipa-rar/THMHO_heatmap_generator.git
 
 WORKDIR $CATKIN_WS
 RUN echo "Pulling & Compiling THMHO module" \

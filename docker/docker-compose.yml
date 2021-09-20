@@ -62,7 +62,7 @@ services:
       context: .
       dockerfile: Dockerfile-heatmap-gen
     container_name: heatmap_generator
-    #command: roslaunch thmho_firos_heatmap_bringup bringup.launch
+    command: roslaunch thmho_firos_heatmap_bringup docker_bringup.launch
     environment:
       - "ROS_MASTER_URI=http://192.168.1.235:11311"
       - "ROS_IP=192.168.1.235"
