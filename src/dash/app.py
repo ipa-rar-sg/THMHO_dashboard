@@ -11,11 +11,45 @@ from datetime import datetime
 
 data = utils.DataHolder()
 
+'''
+        colorscale = [
+                        [0, "rgb(249, 237, 230)"],
+                        [0.1, "rgb(249, 237, 230)"],
+
+                        [0.1, "rgb(251, 227, 213)"],
+                        [0.2, "rgb(251, 227, 213)"],
+
+                        [0.2, "rgb(252, 215, 194)"],
+                        [0.3, "rgb(252, 215, 194)"],
+
+                        [0.3, "rgb(249, 196, 169)"],
+                        [0.4, "rgb(249, 196, 169)"],
+
+                        [0.4, "rgb(246, 177, 145)"],
+                        [0.5, "rgb(246, 177, 145)"],
+
+                        [0.5, "rgb(240, 155, 122)"],
+                        [0.6, "rgb(240, 155, 122)"],
+
+                        [0.6, "rgb(229, 130, 103)"],
+                        [0.7, "rgb(229, 130, 103)"],
+
+                        [0.7, "rgb(218, 106, 85)"],
+                        [0.8, "rgb(218, 106, 85)"],
+
+                        [0.8, "rgb(206, 81, 70)"],
+                        [0.9, "rgb(206, 81, 70)"],
+
+                        [0.9, "rgb(255, 255, 255)"],
+                        [1.0, "rgb(255, 255, 255)"]
+        ]
+'''
+
 resolution = (1920, 1080)
 cell_max_size = resolution[1] // data.config['width']
 default_marks = {i: {'label': f'{i}'} for i in range(1,1)}
 
-TOLERANCE = 20
+TOLERANCE = 40
 # the style arguments for the sidebar.
 SIDEBAR_STYLE = {
     'position': 'fixed',
@@ -168,38 +202,9 @@ def update_last_heatmap(n, _mode, _date, _hour, _min, _sec, _nheat):
         z = _tmp_data,
         x = list(range(0, data.config['width'])),
         y = list(range(0, data.config['height'])),
-        colorscale = [
-                        [0, "rgb(249, 237, 230)"],
-                        [0.1, "rgb(249, 237, 230)"],
-
-                        [0.1, "rgb(251, 227, 213)"],
-                        [0.2, "rgb(251, 227, 213)"],
-
-                        [0.2, "rgb(252, 215, 194)"],
-                        [0.3, "rgb(252, 215, 194)"],
-
-                        [0.3, "rgb(249, 196, 169)"],
-                        [0.4, "rgb(249, 196, 169)"],
-
-                        [0.4, "rgb(246, 177, 145)"],
-                        [0.5, "rgb(246, 177, 145)"],
-
-                        [0.5, "rgb(240, 155, 122)"],
-                        [0.6, "rgb(240, 155, 122)"],
-
-                        [0.6, "rgb(229, 130, 103)"],
-                        [0.7, "rgb(229, 130, 103)"],
-
-                        [0.7, "rgb(218, 106, 85)"],
-                        [0.8, "rgb(218, 106, 85)"],
-
-                        [0.8, "rgb(206, 81, 70)"],
-                        [0.9, "rgb(206, 81, 70)"],
-
-                        [0.9, "rgb(255, 255, 255)"],
-                        [1.0, "rgb(255, 255, 255)"]
-        ]
-    ))
+        colorscale = "thermal",
+        )
+    )
     fig.update_layout(
         autosize = False,
         width = 1.5*cell_max_size * data.config['width'],
