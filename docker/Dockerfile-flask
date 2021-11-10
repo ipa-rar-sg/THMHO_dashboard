@@ -1,5 +1,6 @@
 FROM python:3.8-slim
 WORKDIR /src
+RUN pip install -U pip wheel
 RUN pip install Flask pymongo
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
 
