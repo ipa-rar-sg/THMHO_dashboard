@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from scipy.sparse import csr_matrix
 import time
 import os
 import pymongo
@@ -25,6 +26,7 @@ class DataHolder:
         self.set_connection()
         self.last_time = (datetime.now() - timedelta(0, 60)).isoformat()
         self.update()
+        # self.mask = Get from first document of database, or something
         while self.df.empty:
             self.update()
 
@@ -36,6 +38,14 @@ class DataHolder:
     def read_df_from_query(self, query={}):
         cursor = self.col.find(query)
         return pd.DataFrame(list(cursor))
+
+    def generate_csr(self, df):
+        return csr_matrix((np.array(df['data']),
+                           np.array(df['indices']),
+                           np.array(df['indptr'])), shape=self.shape)
+
+    def decode(self, csr):
+        return (self.mask*100) + csr.toarray()
         
     def update(self):
         self.df = self.read_df_from_query({"date": {"$gte": self.last_time}})
@@ -49,8 +59,10 @@ class DataHolder:
         _tmp = self.read_df_from_query({"date": {"$gte": low, "$lte": high}})
         if _tmp.empty:
             return np.zeros(self.shape), f'{date.isoformat()} NOT FOUND'
-        _tmp = _tmp.set_index('date')
-        return np.array(_tmp.iloc[-1]['data']).reshape(self.shape), date.isoformat()
+        _tmp = _tmp.set_index('date').iloc[-1]
+        _tmp = generate_csr(_tmp)
+        _tmp = decode(_tmp)
+        return _tmp, date.isoformat()
 
     def get_data_from_date_bunch(self, date, delta=60):
         low = (date - timedelta(0, delta)).isoformat()
@@ -60,6 +72,8 @@ class DataHolder:
             _tmp = _tmp.set_index('date')
         self.timed_data = _tmp.iloc[-10:]
 
-
     def get_last_data(self):
-        return np.array(self.df.iloc[-1]['data']).reshape(self.shape)
+        _tmp = self.df.iloc[-1]
+        _tmp = generate_csr(_tmp)
+        _tmp = decode(_tmp)
+        return _tmp
