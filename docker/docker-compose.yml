@@ -11,7 +11,21 @@ services:
       - 27017:27017
     volumes:
       - ../src/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - mgstorage:/data/db
+      - mongostorage:/data/db
+    networks:
+      - heatmap_net
+  mongocsr:
+    container_name: mongocsr
+    environment:
+      - MONGO_INITDB_DATABASE=heatmap
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    image: mongo
+    ports:
+      - 27017:27018
+    volumes:
+      - ../src/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongosparse:/data/db
     networks:
       - heatmap_net
   flask:
@@ -35,29 +49,10 @@ services:
       - ../src/flask:/src
     networks:
       - heatmap_net
-  dash:
-    build:
-      context: .
-      dockerfile: Dockerfile-dash
-    container_name: dash
-    environment:
-      - MONGO_INITDB_DATABASE=heatmap
-      - MONGO_INITDB_ROOT_USERNAME=mongo
-      - MONGO_INITDB_ROOT_PASSWORD=admin
-      - MONGO_COLLECTION=$MONGO_COLLECTION
-      - HEATMAP_WIDTH=$HEATMAP_WIDTH
-      - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
-    image: dash
-    ports:
-      - 8050:8050
-    depends_on:
-      - flask
-    volumes:
-      - ../src/dash:/src
-    networks:
-      - heatmap_net
 volumes:
-  mgstorage:
+  mongostorage:
+    external: true
+  mongosparse:
     external: true
 networks:
   heatmap_net:

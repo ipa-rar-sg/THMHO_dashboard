@@ -3,7 +3,8 @@
 echo "----------------------------------------"
 echo "CREATING DOCKER VOLUME AND NETWORK"
 echo "----------------------------------------"
-docker volume create mgstorage
+docker volume create mongostorage
+docker volume create mongosparse
 docker network create heatmap_net
 echo "----------------------------------------"
 echo "FINISHED, IGNORE ERRORS ABOVE (IF ANY)"

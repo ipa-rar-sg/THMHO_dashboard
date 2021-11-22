@@ -43,8 +43,23 @@ def insert():
     '''
     body = request.json
     reg_id = conn_col.insert_one(body).inserted_id
-    reg_id2 = conn_col_csr.insert_one(body).inserted_id
-    return f'Inserted successfully registry with new id: Mongo: {reg_id} & {reg_id2}'
+    return f'Inserted successfully registry with new id: {reg_id}'
+
+@app.route('/insparse', methods=['POST'])
+def insert():
+    '''
+    Inserts registry in the database.
+    POST request must have a json body, possible content of body:
+    - name: string identificator for the mask
+    - width: int
+    - height: int
+    - date: string containing valid timestamp
+    - indices: list of int stating the indices of the sparse (csr) matrix
+    - indptr: list of int stating the indptr of the sparse (csr) matrix
+    '''
+    body = request.json
+    reg_id = conn_col_csr.insert_one(body).inserted_id
+    return f'Inserted successfully registry with new id: {reg_id}'
 
 @app.route('/select', methods=['GET'])
 def select():
