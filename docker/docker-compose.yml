@@ -21,8 +21,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=admin
     image: mongo
+    command: mongod --port 27018
     ports:
-      - 27017:27018
+      - 27018:27018
     volumes:
       - ../src/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongosparse:/data/db

@@ -21,7 +21,7 @@ conn = pymongo.MongoClient(conn_str, connect=False)
 conn_db = conn[config['dbname']]
 conn_col = conn_db[config['collection']]
 
-conn_csr = pymongo.MongoClient(conn_str_csr, connect=False)
+conn_csr = pymongo.MongoClient(conn_str_csr, port=27018, connect=False)
 conn_db_csr = conn_csr[config['dbname']]
 conn_col_csr = conn_db_csr[config['collection']]
 
@@ -46,7 +46,7 @@ def insert():
     return f'Inserted successfully registry with new id: {reg_id}'
 
 @app.route('/insparse', methods=['POST'])
-def insert():
+def insparse():
     '''
     Inserts registry in the database.
     POST request must have a json body, possible content of body:
