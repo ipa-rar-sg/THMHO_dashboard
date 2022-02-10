@@ -14,8 +14,7 @@ services:
       - 27017:27017
     volumes:
       - mgstorage:/data/db
-    networks:
-      - heatmap_net
+    network_mode: "host"
   flask:
     build:
       context: .
@@ -33,8 +32,7 @@ services:
       - 5000:5000
     depends_on:
       - mongo
-    networks:
-      - heatmap_net
+    network_mode: "host"
   dash:
     build:
       context: .
@@ -52,13 +50,8 @@ services:
       - 8050:8050
     depends_on:
       - flask
-    networks:
-      - heatmap_net
+    network_mode: "host"
 volumes:
   mgstorage:
     external: true
-networks:
-  heatmap_net:
-    external: true
-    driver: bridge
 
