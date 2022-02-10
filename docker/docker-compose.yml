@@ -31,8 +31,6 @@ services:
       - 5000:5000
     depends_on:
       - mongo
-    volumes:
-      - ../src/flask:/src
     networks:
       - heatmap_net
   dash:
@@ -52,8 +50,6 @@ services:
       - 8050:8050
     depends_on:
       - flask
-    volumes:
-      - ../src/dash:/src
     networks:
       - heatmap_net
 volumes:
