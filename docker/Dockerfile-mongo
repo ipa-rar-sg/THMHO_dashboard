@@ -1,0 +1,4 @@
+FROM mongo
+RUN apt update && apt upgrade -y && apt install curl -y
+RUN curl https://raw.githubusercontent.com/ipa-rar-sg/THMHO_dashboard/sparsenosql/src/mongo/mongo-init.js --output /docker-entrypoint-initdb.d/mongo-init.js
+
