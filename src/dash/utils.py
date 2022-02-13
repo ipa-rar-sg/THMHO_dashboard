@@ -24,20 +24,35 @@ class DataHolder:
         self.shape = (self.config['height'], self.config['width'])
         self.timed_data = None
         self.set_connection()
-        self.last_time = (datetime.now() - timedelta(0, 60)).isoformat()
+        self.read_mask()
         self.update()
-        # self.mask = Get from first document of database, or something
         while self.df.empty:
             self.update()
+        self.last_time = (datetime.now() - timedelta(0, 60)).isoformat()
 
     def set_connection(self):
         self.conn = pymongo.MongoClient(conn_str)
         self.db = self.conn[self.config['dbname']]
         self.col = self.db[self.config['collection']]
 
-    def read_df_from_query(self, query={}):
+    def read_from_query(self, query={}, df=True):
         cursor = self.col.find(query)
-        return pd.DataFrame(list(cursor))
+        data = list(cursor)
+        if df:
+            return pd.DataFrame(data)
+        return data
+
+    def read_mask(self):
+        result = self.read_from_query({"name": "base_mask"}, False)
+        while not result:
+            result = self.read_from_query({"name": "base_mask"}, False)
+        mask = result[0]
+        csr = csr_matrix((
+            np.full((len(mask['indices']),), 100),
+            np.array(mask['indices']),
+            np.array(mask['indptr'])
+        ), shape = (mask['height'], mask['width']))
+        self.mask = csr.toarray()
 
     def generate_csr(self, df):
         return csr_matrix((np.array(df['data']),
