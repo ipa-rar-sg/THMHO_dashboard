@@ -11,7 +11,7 @@ config = {
     'dbname' : os.getenv('MONGO_INITDB_DATABASE'),
     'user' : os.getenv('MONGO_INITDB_ROOT_USERNAME'),
     'pass' : os.getenv('MONGO_INITDB_ROOT_PASSWORD'),
-    'host' : 'mongo',
+    'host' : 'localhost',
     'width': int(os.getenv('HEATMAP_WIDTH')),
     'height': int(os.getenv('HEATMAP_HEIGHT'))
 }
@@ -23,12 +23,13 @@ class DataHolder:
         self.config = config
         self.shape = (self.config['height'], self.config['width'])
         self.timed_data = None
+        self.last_data = []
         self.set_connection()
         self.read_mask()
-        self.update()
-        while self.df.empty:
-            self.update()
         self.last_time = (datetime.now() - timedelta(0, 60)).isoformat()
+        self.update()
+        while not self.last_data:
+            self.update()
 
     def set_connection(self):
         self.conn = pymongo.MongoClient(conn_str)
@@ -42,31 +43,30 @@ class DataHolder:
             return pd.DataFrame(data)
         return data
 
+    def generate_csr(self, dbentry):
+        return csr_matrix((
+            np.full((len(dbentry['indices']),), 100),
+            np.array(dbentry['indices']),
+            np.array(dbentry['indptr'])
+        ), shape = self.shape)
+
     def read_mask(self):
         result = self.read_from_query({"name": "base_mask"}, False)
         while not result:
             result = self.read_from_query({"name": "base_mask"}, False)
         mask = result[0]
-        csr = csr_matrix((
-            np.full((len(mask['indices']),), 100),
-            np.array(mask['indices']),
-            np.array(mask['indptr'])
-        ), shape = (mask['height'], mask['width']))
+        csr = self.generate_csr(mask)
         self.mask = csr.toarray()
-
-    def generate_csr(self, df):
-        return csr_matrix((np.array(df['data']),
-                           np.array(df['indices']),
-                           np.array(df['indptr'])), shape=self.shape)
+        self.mask = (~(self.mask.astype(bool))).astype(int)
 
     def decode(self, csr):
         return (self.mask*100) + csr.toarray()
         
     def update(self):
-        self.df = self.read_df_from_query({"date": {"$gte": self.last_time}})
-        if not self.df.empty:
-            self.df = self.df.set_index('date')
-            self.last_time = self.df.iloc[-1].name
+        _tmp = self.read_from_query({"date": {"$gte": self.last_time}})
+        if not _tmp:
+            self.last_data = _tmp[-1]
+            self.last_time = self.last_data['date']
 
     def get_data_from_date(self, date, delta=1):
         low = (date - timedelta(0, delta)).isoformat()
@@ -88,7 +88,6 @@ class DataHolder:
         self.timed_data = _tmp.iloc[-10:]
 
     def get_last_data(self):
-        _tmp = self.df.iloc[-1]
-        _tmp = generate_csr(_tmp)
-        _tmp = decode(_tmp)
-        return _tmp
+        _tmp = generate_csr(self.last_data)
+        return decode(_tmp)
+
