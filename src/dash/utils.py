@@ -39,10 +39,10 @@ class DataHolder:
     def read_from_query(self, query={}):
         cursor = self.col.find(query)
         data = list(cursor)
+        return data
         # df = True
         # if df:
         #     return pd.DataFrame(data)
-        return data
 
     def generate_csr(self, dbentry):
         return csr_matrix((
@@ -65,7 +65,7 @@ class DataHolder:
         
     def update(self):
         _tmp = self.read_from_query({"date": {"$gte": self.last_time}})
-        if not _tmp:
+        if _tmp:
             self.last_data = _tmp[-1]
             self.last_time = self.last_data['date']
 
