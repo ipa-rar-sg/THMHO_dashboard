@@ -52,9 +52,9 @@ class DataHolder:
         ), shape = self.shape)
 
     def read_mask(self):
-        result = self.read_from_query({"name": "base_mask"}, False)
+        result = self.read_from_query({"name": "base_mask"})
         while not result:
-            result = self.read_from_query({"name": "base_mask"}, False)
+            result = self.read_from_query({"name": "base_mask"})
         mask = result[0]
         csr = self.generate_csr(mask)
         self.mask = csr.toarray()
