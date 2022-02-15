@@ -36,11 +36,12 @@ class DataHolder:
         self.db = self.conn[self.config['dbname']]
         self.col = self.db[self.config['collection']]
 
-    def read_from_query(self, query={}, df=True):
+    def read_from_query(self, query={}):
         cursor = self.col.find(query)
         data = list(cursor)
-        if df:
-            return pd.DataFrame(data)
+        # df = True
+        # if df:
+        #     return pd.DataFrame(data)
         return data
 
     def generate_csr(self, dbentry):
