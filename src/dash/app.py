@@ -189,7 +189,7 @@ def update_last_heatmap(n, _mode, _date, _hour, _min, _sec, _nheat):
             marks = {i: {'label': f'{i}'} for i in range(1, _tmp_len + 1)}
             _tmp_data = data.generate_csr(data.timed_data[_nheat - 1])
             _tmp_data = data.decode(_tmp_data)
-            _tmp_title = f'Showing heatmap: {data.timed_data[_nheat - 1]['date']}'
+            _tmp_title = f'Showing heatmap: {data.timed_data[_nheat - 1]["date"]}'
 
     else:
         _tmp_data = data.get_last_data()
