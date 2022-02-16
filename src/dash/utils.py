@@ -40,9 +40,6 @@ class DataHolder:
         cursor = self.col.find(query)
         data = list(cursor)
         return data
-        # df = True
-        # if df:
-        #     return pd.DataFrame(data)
 
     def generate_csr(self, dbentry):
         return csr_matrix((
@@ -72,21 +69,20 @@ class DataHolder:
     def get_data_from_date(self, date, delta=1):
         low = (date - timedelta(0, delta)).isoformat()
         high = (date + timedelta(0, delta)).isoformat()
-        _tmp = self.read_df_from_query({"date": {"$gte": low, "$lte": high}})
-        if _tmp.empty:
-            return np.zeros(self.shape), f'{date.isoformat()} NOT FOUND'
-        _tmp = _tmp.set_index('date').iloc[-1]
-        _tmp = generate_csr(_tmp)
-        _tmp = decode(_tmp)
-        return _tmp, date.isoformat()
+        _tmp = self.read_from_query({"date": {"$gte": low, "$lte": high}})
+        if _tmp:
+            _tmp = _tmp[len(_tmp) // 2]
+            _date = _tmp['date']
+            _data = generate_csr(_tmp)
+            return decode(_data), _date
+        return np.zeros(self.shape), f'{date.isoformat()} NOT FOUND'
 
     def get_data_from_date_bunch(self, date, delta=60):
         low = (date - timedelta(0, delta)).isoformat()
         high = (date + timedelta(0, delta)).isoformat()
-        _tmp = self.read_df_from_query({"date": {"$gte": low, "$lte": high}})
-        if not _tmp.empty:
-            _tmp = _tmp.set_index('date')
-        self.timed_data = _tmp.iloc[-10:]
+        _tmp = self.read_from_query({"date": {"$gte": low, "$lte": high}})
+        if _tmp:
+            self.timed_data = _tmp[-10]
 
     def get_last_data(self):
         _tmp = generate_csr(self.last_data)

@@ -170,29 +170,26 @@ def update_last_heatmap(n, _mode, _date, _hour, _min, _sec, _nheat):
     _tmp_data = None
     _tmp_title = None
     marks = default_marks
+
     if _mode == 'date' and _date and _hour and _min and _sec:
         _y, _m, _d = map(int, _date.split('-'))
         _tmp_date = datetime(_y, _m, _d, _hour, _min, _sec)
-        # _tmp_data, _tmp_title = data.get_data_from_date(_tmp_date, TOLERANCE)
-        data.get_data_from_date_bunch(_tmp_date, TOLERANCE)
-        if not data.timed_data.empty:
-            _tmp_len = len(data.timed_data)
-            marks = {i: {'label': f'{i}'} for i in range(1, _tmp_len + 1)}
-            _tmp_data = np.array(data.timed_data.iloc[_tmp_len // 2]['data']).reshape(data.shape)
-            _tmp_title = f'Showing heatmap: {data.timed_data.iloc[_tmp_len // 2].name}'
-        else:
-            _tmp_data = np.zeros(data.shape)
-            _tmp_title = f'{_tmp_date.isoformat()} NOT FOUND'
+        _tmp_data, _tmp_title = data.get_data_from_date(_tmp_date, TOLERANCE)
 
-    elif _mode == 'slide':
-        if data.timed_data.empty:
+    elif _mode == 'slide' and _date and _hour and _min and _sec:
+        _y, _m, _d = map(int, _date.split('-'))
+        _tmp_date = datetime(_y, _m, _d, _hour, _min, _sec)
+        data.get_data_from_date_bunch(_tmp_date, TOLERANCE)
+        if not data.timed_data:
             _tmp_data = np.zeros(data.shape)
-            _tmp_title = "Haven't searched for a date yet or previously searched date NOT FOUND"
+            _tmp_title = "Haven't searched for a date yet OR previously searched date NOT FOUND"
+
         else:
             _tmp_len = len(data.timed_data)
             marks = {i: {'label': f'{i}'} for i in range(1, _tmp_len + 1)}
-            _tmp_data = np.array(data.timed_data.iloc[_nheat - 1]['data']).reshape(data.shape)
-            _tmp_title = f'Showing heatmap: {data.timed_data.iloc[_nheat - 1].name}'
+            _tmp_data = data.generate_csr(data.timed_data[_nheat - 1])
+            _tmp_data = data.decode(_tmp_data)
+            _tmp_title = f'Showing heatmap: {data.timed_data[_nheat - 1]['date']}'
 
     else:
         _tmp_data = data.get_last_data()
