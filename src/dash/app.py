@@ -182,7 +182,7 @@ def update_last_heatmap(n, _mode, _date, _hour, _min, _sec, _nheat):
         data.get_data_from_date_bunch(_tmp_date, TOLERANCE)
         if not data.timed_data:
             _tmp_data = np.zeros(data.shape)
-            _tmp_title = "Haven't searched for a date yet OR previously searched date NOT FOUND"
+            _tmp_title = "Previously searched date NOT FOUND"
 
         else:
             _tmp_len = len(data.timed_data)

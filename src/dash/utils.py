@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 from scipy.sparse import csr_matrix
 import time
@@ -81,8 +80,7 @@ class DataHolder:
         low = (date - timedelta(0, delta)).isoformat()
         high = (date + timedelta(0, delta)).isoformat()
         _tmp = self.read_from_query({"date": {"$gte": low, "$lte": high}})
-        if _tmp:
-            self.timed_data = _tmp[-10]
+        self.timed_data = _tmp[-10:]
 
     def get_last_data(self):
         _tmp = self.generate_csr(self.last_data)
