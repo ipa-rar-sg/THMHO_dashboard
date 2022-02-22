@@ -15,7 +15,7 @@ config = {
     'height': int(os.getenv('HEATMAP_HEIGHT'))
 }
 
-conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27017/{config['dbname']}"
+conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27018/{config['dbname']}"
 
 class DataHolder:
     def __init__(self):
