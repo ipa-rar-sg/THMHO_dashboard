@@ -10,7 +10,7 @@ config = {
     'dbname' : os.getenv('MONGO_INITDB_DATABASE'),
     'user' : os.getenv('MONGO_INITDB_ROOT_USERNAME'),
     'pass' : os.getenv('MONGO_INITDB_ROOT_PASSWORD'),
-    'host' : 'mongo'
+    'host' : 'localhost'
 }
 
 conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27017/{config['dbname']}"
@@ -27,11 +27,13 @@ def home():
 def insert():
     '''
     Inserts registry in the database.
-    POST request must have a json body with the following keys:
+    POST request must have a json body, possible content of body:
+    - name: string identificator for the mask
     - width: int
     - height: int
     - date: string containing valid timestamp
-    - data: list of int containing the heatmap data
+    - indices: list of int stating the indices of the sparse (csr) matrix
+    - indptr: list of int stating the indptr of the sparse (csr) matrix
     '''
     body = request.json
     reg_id = conn_col.insert_one(body).inserted_id

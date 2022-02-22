@@ -1,2 +1,4 @@
 __pycache__
+omitdir
+venv
 .env

@@ -1,6 +1,8 @@
 FROM python:3.8-slim
 WORKDIR /src
-RUN pip install wheel 
-RUN pip install pymongo dash numpy pandas dash-bootstrap-components
+RUN apt update && apt upgrade -y && apt install curl -y
+RUN pip install -U pip wheel 
+RUN pip install pymongo dash numpy "dash-bootstrap-components<1" scipy
+RUN curl https://raw.githubusercontent.com/ipa-rar-sg/THMHO_dashboard/sparsenosql/src/dash/app.py --output app.py && curl https://raw.githubusercontent.com/ipa-rar-sg/THMHO_dashboard/sparsenosql/src/dash/utils.py --output utils.py
 CMD ["python3", "app.py"]
 

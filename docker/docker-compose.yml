@@ -1,19 +1,18 @@
 version: "3.9"
 services:
   mongo:
+    build:
+      context: .
+      dockerfile: Dockerfile-mongo
     container_name: mongo
     environment:
       - MONGO_INITDB_DATABASE=heatmap
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=admin
     image: mongo
-    ports:
-      - 27017:27017
     volumes:
-      - ../src/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mgstorage:/data/db
-    networks:
-      - heatmap_net
+    network_mode: "host"
   flask:
     build:
       context: .
@@ -27,14 +26,9 @@ services:
       - HEATMAP_WIDTH=$HEATMAP_WIDTH
       - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: flask
-    ports:
-      - 5000:5000
     depends_on:
       - mongo
-    volumes:
-      - ../src/flask:/src
-    networks:
-      - heatmap_net
+    network_mode: "host"
   dash:
     build:
       context: .
@@ -48,19 +42,10 @@ services:
       - HEATMAP_WIDTH=$HEATMAP_WIDTH
       - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: dash
-    ports:
-      - 8050:8050
     depends_on:
       - flask
-    volumes:
-      - ../src/dash:/src
-    networks:
-      - heatmap_net
+    network_mode: "host"
 volumes:
   mgstorage:
     external: true
-networks:
-  heatmap_net:
-    external: true
-    driver: bridge
 
