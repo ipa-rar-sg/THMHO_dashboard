@@ -10,9 +10,11 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=admin
     image: mongo
+    command: mongod --port 27018
+    ports:
+      - 27018:27018
     volumes:
       - mgstorage:/data/db
-    network_mode: "host"
   flask:
     build:
       context: .
@@ -26,9 +28,10 @@ services:
       - HEATMAP_WIDTH=$HEATMAP_WIDTH
       - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: flask
+    ports:
+      - 5000:5000
     depends_on:
       - mongo
-    network_mode: "host"
   dash:
     build:
       context: .
@@ -42,9 +45,10 @@ services:
       - HEATMAP_WIDTH=$HEATMAP_WIDTH
       - HEATMAP_HEIGHT=$HEATMAP_HEIGHT
     image: dash
+    ports:
+      - 8050:8050
     depends_on:
       - flask
-    network_mode: "host"
 volumes:
   mgstorage:
     external: true
