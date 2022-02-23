@@ -10,7 +10,7 @@ config = {
     'dbname' : os.getenv('MONGO_INITDB_DATABASE'),
     'user' : os.getenv('MONGO_INITDB_ROOT_USERNAME'),
     'pass' : os.getenv('MONGO_INITDB_ROOT_PASSWORD'),
-    'host' : 'localhost',
+    'host' : 'mongo',
     'width': int(os.getenv('HEATMAP_WIDTH')),
     'height': int(os.getenv('HEATMAP_HEIGHT'))
 }
