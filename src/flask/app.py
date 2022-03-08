@@ -10,7 +10,7 @@ config = {
     'dbname' : os.getenv('MONGO_INITDB_DATABASE'),
     'user' : os.getenv('MONGO_INITDB_ROOT_USERNAME'),
     'pass' : os.getenv('MONGO_INITDB_ROOT_PASSWORD'),
-    'host' : 'localhost'
+    'host' : 'mongo'
 }
 
 conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27018/{config['dbname']}"
