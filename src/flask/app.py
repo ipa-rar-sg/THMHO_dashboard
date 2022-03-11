@@ -46,6 +46,14 @@ def insert():
 
 @app.route('/select', methods=['GET'])
 def select():
+    '''
+    Retrieves registry from database based on the following expected query params:
+    - param date: string in the format: DD-MM-YYYY-HH-mm
+    - param [optional] delta: Integer specifying a delta of second for the searched date
+    Otherwise defaults to 30 seconds
+    - returns: If registry found with provided data returns a JSON with it, otherwise
+    a string mentioning that no data was found
+    '''
 
     global mask
 
@@ -76,7 +84,10 @@ def select():
         return "Date entered in invalid format, it should be: DD-MM-YYYY-HH-mm"
 
     if 'delta' in request.args:
-        delta = request.args['delta']
+        try:
+            delta = int(request.args['delta'])
+        except:
+            return "delta query param must be an integer"
 
     low = (date - timedelta(0, delta)).isoformat()
     high = (date + timedelta(0, delta)).isoformat()
