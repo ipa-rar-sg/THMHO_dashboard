@@ -48,7 +48,7 @@ def insert():
 def select():
     '''
     Retrieves registry from database based on the following expected query params:
-    - param date: string in the format: DD-MM-YYYY-HH-mm
+    - param date: string in the format: YYYY-MM-DD-HH-mm
     - param [optional] delta: Integer specifying a delta of second for the searched date
     Otherwise defaults to 30 seconds
     - returns: If registry found with provided data returns a JSON with it, otherwise
@@ -78,10 +78,10 @@ def select():
     if 'date' not in request.args:
         return 'Date query parameter required and was not given'
     try:
-        D, M, Y, H, m = map(int, request.args['date'].split('-'))
-        date = datetime(D, M, Y, H, m)
+        Y, M, D, H, m = map(int, request.args['date'].split('-'))
+        date = datetime(Y, M, D, H, m)
     except:
-        return "Date entered in invalid format, it should be: DD-MM-YYYY-HH-mm"
+        return "Date entered in invalid format, it should be: YYYY-MM-DD-HH-mm"
 
     if 'delta' in request.args:
         try:
@@ -98,7 +98,7 @@ def select():
         mid = results[len(results) // 2]
         date = mid['date']
         data = csr_matrix((
-                np.full((len(mid['indices']),), 100),
+                np.array(mid['data']),
                 np.array(mid['indices']),
                 np.array(mid['indptr'])
             ), shape = mask.shape)
