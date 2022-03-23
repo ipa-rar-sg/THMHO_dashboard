@@ -42,7 +42,7 @@ class DataHolder:
 
     def generate_csr(self, dbentry, mask=False):
         if mask:
-            data = np.full((len(dbentry['indices']),), 100),
+            data = np.full((len(dbentry['indices']),), 100)
         else:
             data = np.array(dbentry['data'])
         return csr_matrix((
