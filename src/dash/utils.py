@@ -10,12 +10,12 @@ config = {
     'dbname' : os.getenv('MONGO_INITDB_DATABASE'),
     'user' : os.getenv('MONGO_INITDB_ROOT_USERNAME'),
     'pass' : os.getenv('MONGO_INITDB_ROOT_PASSWORD'),
-    'host' : 'localhost',
+    'host' : 'mongo',
     'width': int(os.getenv('HEATMAP_WIDTH')),
     'height': int(os.getenv('HEATMAP_HEIGHT'))
 }
 
-conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27017/{config['dbname']}"
+conn_str = f"mongodb://{config['user']}:{config['pass']}@{config['host']}:27018/{config['dbname']}"
 
 class DataHolder:
     def __init__(self):
@@ -40,9 +40,13 @@ class DataHolder:
         data = list(cursor)
         return data
 
-    def generate_csr(self, dbentry):
+    def generate_csr(self, dbentry, mask=False):
+        if mask:
+            data = np.full((len(dbentry['indices']),), 100)
+        else:
+            data = np.array(dbentry['data'])
         return csr_matrix((
-            np.full((len(dbentry['indices']),), 100),
+            data,
             np.array(dbentry['indices']),
             np.array(dbentry['indptr'])
         ), shape = self.shape)
@@ -52,7 +56,7 @@ class DataHolder:
         while not result:
             result = self.read_from_query({"name": "base_mask"})
         mask = result[-1]
-        csr = self.generate_csr(mask)
+        csr = self.generate_csr(mask, True)
         self.mask = csr.toarray()
         self.mask = (~(self.mask.astype(bool))).astype(int)
 

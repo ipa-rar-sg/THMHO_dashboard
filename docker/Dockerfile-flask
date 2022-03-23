@@ -2,7 +2,7 @@ FROM python:3.8-slim
 WORKDIR /src
 RUN apt update && apt upgrade -y && apt install curl -y
 RUN pip install -U pip wheel
-RUN pip install Flask pymongo
+RUN pip install Flask pymongo numpy scipy
 RUN curl https://raw.githubusercontent.com/ipa-rar-sg/THMHO_dashboard/sparsenosql/src/flask/app.py --output app.py
 CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
 
